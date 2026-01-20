@@ -25,6 +25,24 @@ export default defineType({
       validation: (Rule) => Rule.required().error('Icon image is required'),
     }),
     defineField({
+      name: 'thumbnail',
+      title: 'Thumbnail Image',
+      type: 'image',
+      description: 'Thumbnail image for the medical service',
+      options: {
+        hotspot: true,
+      },
+      fields: [
+        {
+          name: 'alt',
+          type: 'string',
+          title: 'Alternative Text',
+          description: 'Important for accessibility and SEO',
+          validation: (Rule) => Rule.required().error('Alt text is required for accessibility'),
+        },
+      ],
+    }),
+    defineField({
       name: 'title',
       title: 'Title',
       type: 'string',
@@ -46,7 +64,12 @@ export default defineType({
       description: 'Order in which this service appears (lower numbers appear first)',
       validation: (Rule) => Rule.min(0).integer(),
     }),
-
+  defineField({
+      name: 'isFeatured',
+      title: 'Featured ',
+      type: 'boolean',
+      initialValue: false,
+    }),
   ],
   preview: {
     select: {
