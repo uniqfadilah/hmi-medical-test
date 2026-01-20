@@ -5,16 +5,26 @@ import { ArrowRight } from 'lucide-react'
 import Specialties from '@/components/specialties'
 import Maps from '@/components/maps'
 import CorporateEnquiries from '@/components/corporate-enquiries'
-import OurSpecialist from '@/components/our-specialist'
+import OurSpecialistWrapper from '@/components/our-specialist-wrapper'
+import { getWebsiteSettings } from '@/lib/queries'
+import { urlFor } from '@/sanity/lib/image'
 
-const page = () => {
+const page = async () => {
+  const websiteSettings = await getWebsiteSettings()
+  
+  // Get banner image from website settings or use fallback
+  const bannerImage = websiteSettings?.banner?.asset
+    ? urlFor(websiteSettings.banner).quality(100).url()
+    : '/home-page.webp'
+  const bannerAlt = websiteSettings?.banner?.alt || 'HMI Community Outreach Event'
+  
   return (
     <div className="flex flex-col min-h-screen bg-surrface">
       <section className="relative w-full h-[600px] md:h-[700px] lg:h-[800px] overflow-hidden">
         <div className="absolute inset-0">
           <Image
-            src="/home-page.webp"
-            alt="HMI Community Outreach Event"
+            src={bannerImage}
+            alt={bannerAlt}
             fill
             className="object-cover"
             priority
@@ -55,18 +65,19 @@ const page = () => {
           <div className="container mx-auto px-4 md:px-6 lg:px-8">
             <div className="flex flex-col md:flex-row justify-between items-center text-white text-xs md:text-sm gap-2 md:gap-0">
               <p className="text-left">HMI Cares for all Singaporeans</p>
-              <p className="text-center">25 Years of Care</p>
-              <p className="text-right">40 years of Total Defence</p>
+              <p className="text-center">{`${new Date().getFullYear() - 1999} Years of Care`}</p>
+              <p className="text-right">{`${new Date().getFullYear() - 1984} years of Total Defence`}</p>
             </div>
           </div>
         </div>
       </section>
-      <Maps />
+      <Maps websiteSettings={websiteSettings} />
       <Specialties />
-      <OurSpecialist />
-      <CorporateEnquiries />
+      <OurSpecialistWrapper />
+      <CorporateEnquiries websiteSettings={websiteSettings} />
     </div>
   )
 }
 
 export default page
+

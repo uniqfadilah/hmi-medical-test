@@ -3,6 +3,14 @@
 import React, { useState } from 'react'
 import { Menu, X, Search, Globe, ChevronRight, ArrowLeft } from 'lucide-react'
 import Image from "next/image"
+import Link from 'next/link'
+import { SpecialtyCare } from '@/lib/queries'
+import { urlFor } from '@/sanity/lib/image'
+
+interface MobileNavigationProps {
+  specialties?: SpecialtyCare[]
+}
+
 // Constants
 const NAVIGATION_ITEMS = [
   { label: 'Find a Doctor', href: '#', hasArrow: false },
@@ -19,23 +27,6 @@ const UTILITY_LINKS = [
   { label: 'Contact Us', href: '#', hasArrow: false },
 ] as const
 
-const SPECIALTIES = [
-  'Bariatric Surgery',
-  'Cardiology',
-  'Colorectal',
-  'Dermatology',
-  'Ear, Nose & Throat',
-  'Gastroenterology',
-  'Gynaecology & Obstetrics',
-  'Family Medicine',
-  'Internal Medicine',
-  'Orthopaedic',
-  'Paediatrics',
-  'Renal Medicine',
-  'Respiratory & Intensive Care Medicine',
-  'Sleep Medicine',
-  'Urology & Male Subfertility',
-] as const
 
 const Logo = () => (
   <div className="relative w-[120px] h-[48px]">
@@ -53,7 +44,7 @@ const Logo = () => (
 )
 
 
-const MobileNavigation = () => {
+const MobileNavigation = ({ specialties = [] }: MobileNavigationProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [selectedNav, setSelectedNav] = useState<string | null>(null)
 
@@ -322,24 +313,27 @@ const MobileNavigation = () => {
             {selectedNav === 'specialty-care' && (
               <div className="flex-1 overflow-y-auto">
                 {/* Image Section */}
-                <div className="relative w-full h-48 bg-gray-100">
-                  <Image
-                    src="/specialties/xray.png"
-                    alt="Medical Specialties"
-                    fill
-                    className="object-cover"
-                  />
-                </div>
+                {specialties && specialties.length > 0 && specialties[0]?.thumbnail && (
+                  <div className="relative w-full h-48 bg-gray-100">
+                    <Image
+                      src={urlFor(specialties[0].thumbnail).quality(100).url()}
+                      alt={specialties[0].thumbnail.alt || specialties[0].title || 'Medical Specialties'}
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+                )}
 
                 {/* See All Specialties Link */}
                 <div className="px-4 py-4 border-b border-gray-200">
-                  <a
-                    href="#"
+                  <Link
+                    href="/specialty"
+                    onClick={closeMenu}
                     className="flex items-center justify-between text-sm text-gray-700 hover:text-primary-newblue transition-colors"
                   >
                     <span>See all specialties</span>
                     <ChevronRight className="h-4 w-4" />
-                  </a>
+                  </Link>
                 </div>
 
                 {/* Specialties List */}
@@ -347,19 +341,28 @@ const MobileNavigation = () => {
                   <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-4 font-inter">
                     SPECIALITIES & TREATMENTS
                   </h3>
-                  <ul className="space-y-3">
-                    {SPECIALTIES.map((specialty) => (
-                      <li key={specialty}>
-                        <a
-                          href="#"
-                          onClick={closeMenu}
-                          className="block text-sm text-gray-700 hover:text-primary-newblue transition-colors py-1"
-                        >
-                          {specialty}
-                        </a>
-                      </li>
-                    ))}
-                  </ul>
+                  {specialties && specialties.length > 0 ? (
+                    <ul className="space-y-3">
+                      {specialties.map((specialty) => {
+                        const href = specialty.slug?.current 
+                          ? `/specialty/${specialty.slug.current}` 
+                          : '#'
+                        return (
+                          <li key={specialty._id}>
+                            <Link
+                              href={href}
+                              onClick={closeMenu}
+                              className="block text-sm text-gray-700 hover:text-primary-newblue transition-colors py-1"
+                            >
+                              {specialty.title}
+                            </Link>
+                          </li>
+                        )
+                      })}
+                    </ul>
+                  ) : (
+                    <p className="text-gray-500 text-sm">No specialties available.</p>
+                  )}
                 </div>
               </div>
             )}

@@ -1,15 +1,15 @@
 import { defineField, defineType } from 'sanity'
 
 export default defineType({
-  name: 'medicalService',
-  title: 'Medical specialties',
+  name: 'specialistFeatured',
+  title: 'Specialist Featured',
   type: 'document',
   fields: [
     defineField({
-      name: 'icon',
-      title: 'Icon Image',
+      name: 'image',
+      title: 'Image',
       type: 'image',
-      description: 'Icon image for the medical service',
+      description: 'Image for the featured specialist',
       options: {
         hotspot: true,
       },
@@ -22,42 +22,39 @@ export default defineType({
           validation: (Rule) => Rule.required().error('Alt text is required for accessibility'),
         },
       ],
-      validation: (Rule) => Rule.required().error('Icon image is required'),
+      validation: (Rule) => Rule.required().error('Image is required'),
     }),
     defineField({
       name: 'title',
       title: 'Title',
       type: 'string',
-      validation: (Rule) => Rule.required().max(100).error('Title is required and must be less than 100 characters'),
+      validation: (Rule) => Rule.required().error('Title is required'),
     }),
     defineField({
       name: 'description',
       title: 'Description',
       type: 'text',
-      validation: (Rule) =>
-        Rule.required()
-          .max(200)
-          .error('Description is required and must be less than 200 characters'),
+      validation: (Rule) => Rule.required().error('Description is required'),
     }),
     defineField({
       name: 'order',
       title: 'Display Order',
       type: 'number',
-      description: 'Order in which this service appears (lower numbers appear first)',
+      description: 'Order in which this specialist appears (lower numbers appear first)',
       validation: (Rule) => Rule.min(0).integer(),
     }),
   ],
   preview: {
     select: {
       title: 'title',
-      icon: 'icon',
+      image: 'image',
       description: 'description',
     },
-    prepare({ title, icon, description }) {
+    prepare({ title, image, description }) {
       return {
-        title: title || 'Untitled Medical Service',
+        title: title || 'Untitled Specialist',
         subtitle: description ? description.substring(0, 50) + '...' : 'No description',
-        media: icon,
+        media: image,
       }
     },
   },

@@ -11,6 +11,11 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Separator } from '@/components/ui/separator'
 import SpecialtyCareDropdown from './specialty-care-dropdown'
+import { SpecialtyCare } from '@/lib/queries'
+
+interface NavigationProps {
+  specialties?: SpecialtyCare[]
+}
 
 // Constants
 const LANGUAGES = ['EN', 'ID', 'ZH'] as const
@@ -100,7 +105,7 @@ const TopBar = () => (
   </div>
 )
 
-const MainNavigation = () => {
+const MainNavigation = ({ specialties = [] }: { specialties?: SpecialtyCare[] }) => {
   const [isSpecialtyOpen, setIsSpecialtyOpen] = useState(false)
   const specialtyRef = useRef<HTMLDivElement>(null)
 
@@ -138,7 +143,7 @@ const MainNavigation = () => {
                     className={`h-4 w-4 transition-transform ${isSpecialtyOpen ? 'rotate-180' : ''}`}
                   />
                 </button>
-                <SpecialtyCareDropdown isOpen={isSpecialtyOpen} />
+                <SpecialtyCareDropdown isOpen={isSpecialtyOpen} specialties={specialties} />
               </div>
             ) : (
               <a 
@@ -155,7 +160,7 @@ const MainNavigation = () => {
   )
 }
 
-const Navigation = () => {
+const Navigation = ({ specialties = [] }: NavigationProps) => {
   return (
     <header className="w-full bg-white lg:flex flex-col hidden fixed top-0 left-0 right-0 z-50">
       <div className='bg-primary-newblue text-white text-center'>
@@ -167,7 +172,7 @@ const Navigation = () => {
         <div className="container mx-auto px-4">
           <div className="flex items-center space-x-[66px] justify-between h-20 ">
             <Logo />
-            <MainNavigation />
+            <MainNavigation specialties={specialties} />
             <Button className="bg-primary-newblue hover:bg-primary-newblue/90 text-white rounded-full px-6 py-2 h-auto font-medium">
               Make Appointment
             </Button>

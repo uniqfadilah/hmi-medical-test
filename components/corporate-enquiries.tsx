@@ -2,15 +2,18 @@ import Image from 'next/image'
 import { Mail, ArrowRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
-import { getInsights, type Insight } from '@/lib/queries'
+import { getInsights, type Insight, type WebsiteSettings } from '@/lib/queries'
 import { urlFor } from '@/sanity/lib/image'
+
+interface CorporateEnquiriesProps {
+  websiteSettings?: WebsiteSettings | null
+}
 
 interface InsightCardProps {
   insight: Insight
 }
 
 function InsightCard({ insight }: InsightCardProps) {
-    console.log(insight)
   const { title, description, thumbnail, isFeatured } = insight
   const imageUrl = thumbnail?.asset ? urlFor(thumbnail).quality(100).url() : null
   const altText = thumbnail?.alt || title
@@ -39,8 +42,11 @@ function InsightCard({ insight }: InsightCardProps) {
   )
 }
 
-export default async function CorporateEnquiries() {
+export default async function CorporateEnquiries({ websiteSettings }: CorporateEnquiriesProps) {
   const insights = await getInsights()
+  
+  // Use corporate email from website settings or fallback to hardcoded value
+  const corporateEmail = websiteSettings?.email_corporate || 'askus@hmimedical.com.sg'
 
   return (
     <section className="px-4 md:px-6 lg:px-8 py-8 md:py-12 bg-[#F1F6FF]">
@@ -79,11 +85,11 @@ export default async function CorporateEnquiries() {
         <div className="flex items-center gap-2">
           <Mail className="w-5 h-5 text-white flex-shrink-0" aria-hidden="true" />
           <a
-            href="mailto:askus@hmimedical.com.sg"
+            href={`mailto:${corporateEmail}`}
             className="text-white text-sm md:text-base lg:text-lg hover:underline focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-transparent rounded"
-            aria-label="Send email to askus@hmimedical.com.sg"
+            aria-label={`Send email to ${corporateEmail}`}
           >
-            askus@hmimedical.com.sg
+            {corporateEmail}
           </a>
         </div>
       </div>
