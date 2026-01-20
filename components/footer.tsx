@@ -1,10 +1,11 @@
-import React from 'react'
-import { MapPin, Mail, ArrowRight, Linkedin, Globe } from 'lucide-react'
+'use client'
+
+import React, { useState } from 'react'
+import { MapPin, Mail, ArrowRight, Linkedin, Globe, ChevronRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import Image from 'next/image'
 
-// Types
 interface FooterLink {
   label: string
   href: string
@@ -21,14 +22,16 @@ interface AppStoreButton {
   sublabel: string
   href?: string
 }
+    
+const PRIMARY_LINKS = [
+  { label: 'Find a Doctor', href: '#' },
+  { label: 'Find a Clinic', href: '#' },
+]
 
-// Constants
 const FOOTER_SECTIONS: FooterSection[] = [
   {
     title: 'Explore HMI',
     links: [
-      { label: 'Find a Doctor', href: '#' },
-      { label: 'Find a Clinic', href: '#' },
       { label: 'Medical Travel', href: '#' },
       { label: 'Corporate Healthcare', href: '#' },
       { label: 'Healthcare Education', href: '#' },
@@ -106,11 +109,9 @@ const FOOTER_BOTTOM_LINKS: FooterBottomLink[] = [
   { label: 'English', href: '#', icon: Globe },
 ]
 
-// Styles
 const linkStyles = 'text-white hover:text-white/80 text-sm transition-colors'
 const sectionTitleStyles = 'text-sm font-medium text-white/50 mb-4'
 
-// Components
 const Logo = () => (
   <div className="relative w-[120px] h-[48px]">
     <Image
@@ -144,7 +145,7 @@ const AppStoreIcon = ({ platform }: { platform: 'appstore' | 'googleplay' }) => 
 const AppStoreButton = ({ platform, label, sublabel, href = '#' }: AppStoreButton) => (
   <Button
     variant="outline"
-    className="bg-black/20 border-white/20 hover:bg-black/30 text-white h-auto py-2.5 px-4 justify-start"
+    className="bg-black/20 border-white/20 hover:bg-black/30 text-white h-auto py-2.5 px-4 justify-start w-min"
     asChild
   >
     <Link href={href}>
@@ -158,6 +159,35 @@ const AppStoreButton = ({ platform, label, sublabel, href = '#' }: AppStoreButto
     </Link>
   </Button>
 )
+
+const MobileExpandableSection = ({ title, links }: FooterSection) => {
+  const [isOpen, setIsOpen] = useState(false)
+
+  return (
+    <div className="p-[14px">
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full flex items-center justify-between py-[14px] font-inter text-left"
+      >
+        <span className="text-white text-base font-semibold">{title}</span>
+        <ChevronRight
+          className={`h-5 w-5 text-white transition-transform ${isOpen ? 'rotate-90' : ''}`}
+        />
+      </button>
+      {isOpen && (
+        <ul className="pb-4 space-y-3">
+          {links.map((link) => (
+            <li key={link.label}>
+              <Link href={link.href} className={linkStyles}>
+                {link.label}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  )
+}
 
 const FooterLinkList = ({ title, links }: FooterSection) => (
   <div className="lg:col-span-1">
@@ -174,19 +204,15 @@ const FooterLinkList = ({ title, links }: FooterSection) => (
   </div>
 )
 
-const ContactSection = () => (
-  <div className="lg:col-span-1">
-    <div className="mb-6">
-      <p className="text-white text-sm font-medium mb-6">{CONTACT_INFO.company}</p>
+const ContactSection = ({ isMobile = false }: { isMobile?: boolean }) => (
+  <div className={isMobile ? '' : 'lg:col-span-1'}>
+    <div className={isMobile ? 'mb-6' : 'mb-6'}>
+      <p className="text-white text-base font-bold mb-6 font-inter">{CONTACT_INFO.company}</p>
       <div className="space-y-4">
         <div className="flex items-start gap-3">
           <MapPin className="h-5 w-5 text-white mt-0.5 flex-shrink-0" aria-hidden="true" />
           <p className="text-white text-sm leading-relaxed">
-            {CONTACT_INFO.address.line1}
-            <br />
-            {CONTACT_INFO.address.line2}
-            <br />
-            {CONTACT_INFO.address.line3}
+            {CONTACT_INFO.address.line1} {CONTACT_INFO.address.line2} {CONTACT_INFO.address.line3}
           </p>
         </div>
         <div className="flex items-start gap-3">
@@ -202,7 +228,7 @@ const ContactSection = () => (
     </div>
     <Button
       variant="outline"
-      className="border-white text-primary-mhiblue bg-white hover:bg-white/90 h-auto py-3 px-6"
+      className={`border-white text-white  bg-transparent hover:bg-white/90 h-auto py-3 px-6 w-min rounded-full`}
     >
       Contact us
       <ArrowRight className="ml-2 h-4 w-4" />
@@ -211,7 +237,7 @@ const ContactSection = () => (
 )
 
 const FooterBottom = () => (
-  <div className="bg-[#004E89] border-t border-white/10">
+  <div className="bg-[#004E89]">
     <div className="container mx-auto px-4 md:px-6 lg:px-8 py-4">
       <div className="flex flex-col md:flex-row justify-between items-center gap-4">
         <div className="flex flex-wrap items-center gap-3 text-sm text-white">
@@ -231,7 +257,7 @@ const FooterBottom = () => (
             )
           })}
         </div>
-        <div className="text-sm text-white/80">
+        <div className="text-sm text-white/80 w-[312px] sm:w-full text-center">
           Copyright © {new Date().getFullYear()} HMI Medical. All Rights Reserved.
         </div>
       </div>
@@ -243,35 +269,74 @@ const Footer = () => {
   return (
     <footer className="w-full">
       <div className="bg-primary-mhiblue text-white">
-        <div className="container mx-auto px-4 md:px-6 lg:px-8 py-12 md:py-16">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 lg:gap-12">
-            {/* Logo and App Store Section */}
-            <div className="lg:col-span-1">
-              <div className="mb-6">
-                <Logo />
-              </div>
-              <div className="mb-6 font-inter">
-                <p className="text-[#FEFEFE]/50 text-sm mb-1">Download Healthcare app</p>
-                <p className="text-[#FEFEFE]/50 text-sm font-medium">HMI One</p>
-              </div>
-              <div className="flex flex-col gap-3">
-                {APP_STORE_BUTTONS.map((button) => (
-                  <AppStoreButton key={button.platform} {...button} />
-                ))}
-              </div>
+      
+        <div className="md:hidden">
+          <div className="container mx-auto px-4 py-8">
+      
+            <div className="mb-8">
+              <Logo />
             </div>
 
-            {/* Navigation Sections */}
-            {FOOTER_SECTIONS.map((section) => (
-              <FooterLinkList key={section.title} {...section} />
-            ))}
+              {PRIMARY_LINKS.map((link) => (
+                <Link
+                  key={link.label}
+                  href={link.href}
+                  className="block font-inter py-[14px] text-white text-base font-semibold hover:text-white/80 transition-colors"
+                >
+                  {link.label}
+                </Link>
+              ))}
+            
 
-            {/* Contact Section */}
-            <ContactSection />
+            <div className="mb-6">
+              {FOOTER_SECTIONS.map((section) => (
+                <MobileExpandableSection key={section.title} {...section} />
+              ))}
+            </div>
+
+            <ContactSection isMobile />
+            <div className="flex flex-col items-center justify-center border-t border-white mt-[16px] pt-[16px] text-sm">
+             <p  className=' text-[#FEFEFE]'>Download HMI One</p>
+             <div className="flex  gap-3 py-3">
+              <AppStoreButton platform="appstore" label="App Store" sublabel="Download on the" />
+              <AppStoreButton platform="googleplay" label="Google Play" sublabel="GET IT ON" />
+             </div>
+            </div>
           </div>
         </div>
+
+    
+        <div className="hidden md:block">
+          <div className="container mx-auto py-12">
+            <div className="grid grid-cols-7">
+    
+              <div className="lg:col-span-2">
+                <div className="mb-6">
+                  <Logo />
+                </div>
+                <div className="mb-6 font-inter">
+                  <p className="text-[#FEFEFE]/50 text-sm mb-1">Download Healthcare app</p>
+                  <p className="text-[#FEFEFE]/50 text-sm font-medium">HMI One</p>
+                </div>
+                <div className="flex flex-col gap-3">
+                  {APP_STORE_BUTTONS.map((button) => (
+                    <AppStoreButton key={button.platform} {...button} />
+                  ))}
+                </div>
+              </div>
+
+ 
+              {FOOTER_SECTIONS.map((section) => (
+                <FooterLinkList key={section.title} {...section} />
+              ))}
+
+              <ContactSection />
+            </div>
+          </div>
+        </div>
+        <FooterBottom />
       </div>
-      <FooterBottom />
+
     </footer>
   )
 }

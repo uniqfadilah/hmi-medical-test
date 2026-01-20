@@ -21,12 +21,12 @@ function InsightCard({ insight }: InsightCardProps) {
   return (
     <div
       className={cn(
-        'relative h-[528px] rounded-lg overflow-hidden w-full',
-        isFeatured ? 'col-span-3' : 'col-span-1'
+        'relative  rounded-lg overflow-hidden w-full',
+        isFeatured ? 'row-span-6 sm:col-span-3 h-[528px]' : 'h-[80px] row-span-1 sm:col-span-1 sm:h-[528px]'
       )}
     >
       {imageUrl ? (
-        <Image src={imageUrl} alt={altText} fill className="object-cover" sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" />
+        <Image src={imageUrl} alt={altText} fill className="object-cover" />
       ) : (
         <div className="w-full h-full bg-gray-200" aria-hidden="true" />
       )}
@@ -53,12 +53,12 @@ export default async function CorporateEnquiries({ websiteSettings }: CorporateE
       <div className="container mx-auto">
         {/* Insights Section */}
         <div>
-          <h1 className="text-[32px] font-bold text-primary-newblue mb-10">
+          <h1 className="text-[26px] sm:text-[32px] font-bold text-primary-newblue mb-10">
             Sharing more insights
           </h1>
           {insights && insights.length > 0 ? (
             <>
-              <div className="grid grid-cols-1 md:grid-cols-5 gap-6 mb-6">
+              <div className="grid gap-4 mb-6 md:grid-cols-5 md:gap-6">
                 {insights.map((insight) => (
                   <InsightCard key={insight._id} insight={insight} />
                 ))}

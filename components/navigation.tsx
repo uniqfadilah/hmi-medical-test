@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef } from 'react'
 import { Globe, Search, ChevronDown } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
@@ -109,31 +109,27 @@ const MainNavigation = ({ specialties = [] }: { specialties?: SpecialtyCare[] })
   const [isSpecialtyOpen, setIsSpecialtyOpen] = useState(false)
   const specialtyRef = useRef<HTMLDivElement>(null)
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (specialtyRef.current && !specialtyRef.current.contains(event.target as Node)) {
-        setIsSpecialtyOpen(false)
-      }
-    }
+  const handleMouseEnter = () => {
+    setIsSpecialtyOpen(true)
+  }
 
-    if (isSpecialtyOpen) {
-      document.addEventListener('mousedown', handleClickOutside)
-    }
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-    }
-  }, [isSpecialtyOpen])
+  const handleMouseLeave = () => {
+    setIsSpecialtyOpen(false)
+  }
 
   return (
     <nav className="hidden lg:flex font-inter relative">
       <ul className="flex items-center gap-1 list-none">
         {NAVIGATION_ITEMS.map((item) => (
-          <li key={item.label} className="relative">
+          <li key={item.label} className="relative ">
             {item.label === 'Specialty Care' ? (
-              <div ref={specialtyRef} className="relative">
+              <div 
+                ref={specialtyRef} 
+                className="relative h-20 flex items-center"
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}
+              >
                 <button
-                  onClick={() => setIsSpecialtyOpen(!isSpecialtyOpen)}
                   className={`${navLinkStyles} font-inter hover:bg-surface hover:text-primary-newblue flex items-center gap-1`}
                   aria-expanded={isSpecialtyOpen}
                   aria-haspopup="true"
@@ -143,7 +139,12 @@ const MainNavigation = ({ specialties = [] }: { specialties?: SpecialtyCare[] })
                     className={`h-4 w-4 transition-transform ${isSpecialtyOpen ? 'rotate-180' : ''}`}
                   />
                 </button>
-                <SpecialtyCareDropdown isOpen={isSpecialtyOpen} specialties={specialties} />
+                <SpecialtyCareDropdown 
+                  isOpen={isSpecialtyOpen} 
+                  specialties={specialties}
+                  onMouseEnter={handleMouseEnter}
+                  onMouseLeave={handleMouseLeave}
+                />
               </div>
             ) : (
               <a 
@@ -170,7 +171,7 @@ const Navigation = ({ specialties = [] }: NavigationProps) => {
       
       <div className="border-b border-gray-200">
         <div className="container mx-auto px-4">
-          <div className="flex items-center space-x-[66px] justify-between h-20 ">
+          <div className="flex items-center space-x-[66px] justify-between  ">
             <Logo />
             <MainNavigation specialties={specialties} />
             <Button className="bg-primary-newblue hover:bg-primary-newblue/90 text-white rounded-full px-6 py-2 h-auto font-medium">

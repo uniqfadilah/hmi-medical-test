@@ -5,15 +5,17 @@ import Image from 'next/image'
 import { ArrowRight } from 'lucide-react'
 import Link from 'next/link'
 import { SpecialtyCare } from '@/lib/queries'
-import { urlFor } from '@/sanity/lib/image'
+
 
 interface SpecialtyCareDropdownProps {
   isOpen: boolean
   specialties?: SpecialtyCare[]
+  onMouseEnter?: () => void
+  onMouseLeave?: () => void
 }
 
-const SpecialtyCareDropdown = ({ isOpen, specialties = [] }: SpecialtyCareDropdownProps) => {
-  // Organize specialties into 3 columns
+const SpecialtyCareDropdown = ({ isOpen, specialties = [], onMouseEnter, onMouseLeave }: SpecialtyCareDropdownProps) => {
+
   const columns = useMemo(() => {
     if (!specialties || specialties.length === 0) return [[], [], []]
     
@@ -27,20 +29,19 @@ const SpecialtyCareDropdown = ({ isOpen, specialties = [] }: SpecialtyCareDropdo
 
   if (!isOpen) return null
 
-  // Get first specialty for the promotional card
-  const featuredSpecialty = specialties && specialties.length > 0 ? specialties[0] : null
-  const thumbnailUrl = featuredSpecialty?.thumbnail?.asset
-    ? urlFor(featuredSpecialty.thumbnail).quality(100).url()
-    : '/specialties/xray.png'
-  const thumbnailAlt = featuredSpecialty?.thumbnail?.alt || featuredSpecialty?.title || 'Medical Specialties'
+
 
   return (
-    <div className="fixed top-[155px] left-0 w-screen bg-white shadow-lg z-50">
+    <div 
+      className="fixed top-[155px] left-0 w-screen bg-[#F9F9F9] shadow-lg z-50"
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+    >
       <div className="h-[2px] w-full bg-gradient-to-r from-[#0957CB] via-[#00AEEF] to-[#00D494]"></div>
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex gap-12 items-start">
-          <div className="flex-1">
-            <h3
+          <div className="flex justify-between">
+          <div className="flex-1 bg-white shadow-sm py-[24px] px-[145px]">
+          <div className="container mx-auto ">
+              <h3
               className="text-sm w-min whitespace-nowrap font-bold uppercase tracking-wider mb-6 font-inter bg-gradient-to-r from-[#0957CB] via-[#00AEEF] to-[#00D494] bg-clip-text text-transparent"
             >
               SPECIALTY CARE
@@ -71,20 +72,21 @@ const SpecialtyCareDropdown = ({ isOpen, specialties = [] }: SpecialtyCareDropdo
               <p className="text-gray-500 text-sm">No specialties available.</p>
             )}
           </div>
+          </div>
 
-          <div className="w-[320px] flex-shrink-0">
-            <div className="bg-white rounded-xl p-6 text-gray-900 shadow-lg border border-gray-200">
+          <div className=" py-[60px] px-[71px]">
+            <div className="w-[320px] bg-transparent rounded-xl  text-gray-90">
               <div className="relative w-full h-48 mb-4 rounded-lg overflow-hidden bg-gray-100">
                 <Image
-                  src={thumbnailUrl}
-                  alt={thumbnailAlt}
+                  src="/medical-spec.webp"
+                  alt="sp "
                   fill
                   className="object-cover"
                 />
               </div>
               
               <h4 className="text-primary-newblue text-lg font-semibold mb-3 font-inter">
-                {featuredSpecialty?.title || 'Medical Specialties'}
+                Medical Specialties
               </h4>
               
               <p className="text-gray-600 text-sm mb-4 leading-relaxed font-inter">
@@ -101,7 +103,13 @@ const SpecialtyCareDropdown = ({ isOpen, specialties = [] }: SpecialtyCareDropdo
             </div>
           </div>
         </div>
-      </div>
+        <div className="flex container mx-auto divider divide-x ">
+          {["In the News", "Our Network", "Our Specialties"].map((item) => (
+   
+              <h4 key={item} className="text-[#5A5A5A] text-xs font-semibold my-4 font-inter px-4">{item}</h4>
+         
+          ))}
+        </div>
     </div>
   )
 }
